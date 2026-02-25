@@ -19,7 +19,6 @@ from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
 )
-from homeassistant.util import slugify
 
 from signalrgb import AsyncSignalRGBClient, SignalRGBException
 from signalrgb.model import Effect, Layout
@@ -163,9 +162,10 @@ async def async_setup_entry(
     )
 
     LOGGER.info(
-        "Adding %s SignalRGB select entities: %s",
+        "Adding %s SignalRGB select entities for entry ID: %s: %s",
         len(entities),
-        [e.entity_id for e in entities],
+        entry.entry_id,
+        [e._select_type for e in entities],
     )
     async_add_entities(entities)
 
@@ -194,9 +194,8 @@ class SignalRGBBaseSelect(CoordinatorEntity, SelectEntity):
             manufacturer=MANUFACTURER,
             model=MODEL,
         )
-        self.entity_id = f"select.signalrgb_{slugify(select_type)}_{slugify(config_entry.entry_id)}"
         LOGGER.debug(
-            "SignalRGB%sSelect initialized: %s", select_type.title(), self.entity_id
+            "SignalRGBSelect %s initialized for entry: %s", select_type.title(), config_entry.entry_id
         )
 
 
